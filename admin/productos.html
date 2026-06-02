@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos | Veltrix Admin</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
+
+    <canvas id="particulas"></canvas>
+    <canvas id="canvasHielo" style="position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none;"></canvas>
+    <div class="cursor-hielo-punto" id="cursorHielo"></div>
+
+    <!-- Barra de navegación admin -->
+    <header class="navbar">
+        <div class="navbar-contenedor">
+            <a href="../index.html" class="logo">
+    <img src="../imagenes/LOGO.png" alt="Veltrix" class="logo-img">
+</a>
+       <nav class="nav-links" id="navLinks">
+    <div class="nav-bloque nav-acciones" style="margin-left: auto;">
+        <a href="productos.html" class="activo"><i class="fa-solid fa-box"></i> Productos</a>
+        <a href="pedidos.html"><i class="fa-solid fa-truck-fast"></i> Pedidos</a>
+        <a href="contactos.html"><i class="fa-solid fa-message"></i> Mensajes</a>
+
+        <div class="nav-usuario" id="navUsuario" style="display:none;">
+            <button class="nav-usuario-btn" id="btnUsuario">
+                <span id="linkNombre">👤 Admin</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="nav-usuario-menu" id="menuUsuario">
+                <a href="../perfil.html"><i class="fa-solid fa-user-gear"></i> Mi Perfil</a>
+                <a href="#" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+            </div>
+        </div>
+
+        <a href="../login.html" id="linkLogin"><i class="fa-solid fa-user"></i> Iniciar Sesión</a>
+
+        <button id="btnTema" style="background:none; border:none; color: #ffffff; cursor:pointer; font-size:1.1rem;" onclick="cambiarTema()" title="Cambiar tema">
+            <i class="fa-solid fa-palette"></i>
+        </button>
+    </div>
+</nav>
+        </div>
+    </header>
+
+    <!-- Contenido del panel -->
+    <main class="admin-contenedor">
+        <div class="admin-header" data-aos="fade-down">
+            <h1 class="titulo-seccion">Gestión de Productos</h1>
+            <button class="boton-hero" id="btnNuevoProducto">
+                <i class="fa-solid fa-plus"></i> Nuevo Producto
+            </button>
+        </div>
+
+        <!-- Tabla de productos -->
+        <div class="admin-tabla-contenedor" data-aos="fade-up">
+            <table class="admin-tabla" id="tablaProductos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyProductos">
+                    
+                </tbody>
+            </table>
+            <div class="cargando" id="cargandoAdminProductos">
+                <div class="spinner-3d"></div>
+                <p>Cargando productos...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para crear/editar producto (oculto por defecto) -->
+    <div class="modal" id="modalProducto">
+        <div class="modal-contenido auth-tarjeta">
+            <h3 class="resumen-titulo" id="modalTitulo">Nuevo Producto</h3>
+            <form id="formProducto" class="auth-form">
+                <div class="input-grupo">
+                    <label>Nombre</label>
+                    <input type="text" id="prodNombre" required>
+                </div>
+                <div class="input-grupo">
+                    <label>Descripción</label>
+                    <textarea id="prodDescripcion" rows="3" style="background: rgba(0,0,0,0.3); border: 1px solid var(--borde); border-radius: 12px; padding: 14px; color: var(--texto-claro); font-family: var(--fuente-texto); resize: vertical;"></textarea>
+                </div>
+                <div class="input-grupo">
+                    <label>Precio</label>
+                    <input type="number" id="prodPrecio" step="0.01" required>
+                </div>
+                <div class="input-grupo">
+                    <label>Stock</label>
+                    <input type="number" id="prodStock" required>
+                </div>
+                <div class="input-grupo">
+                    <label>Categoría</label>
+                    <select id="prodCategoria" style="background: rgba(0,0,0,0.3); border: 1px solid var(--borde); border-radius: 12px; padding: 14px; color: var(--texto-claro); font-family: var(--fuente-texto);">
+                        <!-- Se llena con JavaScript -->
+                    </select>
+                </div>
+                <div class="input-grupo">
+                    <label>URL Imagen</label>
+                    <input type="url" id="prodImagen" placeholder="https://...">
+                </div>
+                <div class="input-grupo">
+                    <label>O subir imagen desde tu PC</label>
+                    <input type="file" id="prodImagenArchivo" accept="image/*" style="background: rgba(0,0,0,0.3); border: 1px solid var(--borde); border-radius: 12px; padding: 12px; color: var(--texto-claro); font-family: var(--fuente-texto); width: 100%;">
+                </div>
+                <div class="auth-error" id="errorModal" style="display:none;"></div>
+                <button type="submit" class="boton-auth" id="btnGuardarProducto">Guardar</button>
+                <button type="button" class="btn-detalle" style="margin-top:10px; width:100%;" onclick="cerrarModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../js/particulas.js"></script>
+    <script src="../js/cursor-hielo.js"></script>   
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-productos.js"></script>
+
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+
+    <!-- Modal de confirmación -->
+<div id="modalConfirmar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 5000; align-items: center; justify-content: center;">
+    <div style="background: var(--superficie); backdrop-filter: blur(20px); border: 1px solid var(--borde); border-radius: 20px; padding: 40px; text-align: center; max-width: 400px; width: 90%;">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: #ffc107; margin-bottom: 20px;"></i>
+        <p id="modalMensaje" style="color: var(--texto-claro); font-size: 1.1rem; margin-bottom: 30px;">¿Estás seguro?</p>
+        <div style="display: flex; gap: 15px;">
+            <button id="modalCancelar" style="flex: 1; background: transparent; border: 1px solid var(--borde); color: var(--texto); padding: 12px; border-radius: 50px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primario)'; this.style.boxShadow='0 0 12px rgba(0,212,255,0.3)'; this.style.color='var(--primario)';" onmouseout="this.style.borderColor='var(--borde)'; this.style.boxShadow='none'; this.style.color='var(--texto)';">Cancelar</button>
+            <button id="modalAceptar" style="flex: 1; background: #f44; border: none; color: #fff; padding: 12px; border-radius: 50px; cursor: pointer; font-weight: 700; transition: all 0.3s ease;" onmouseover="this.style.boxShadow='0 0 18px rgba(255,68,68,0.6)';" onmouseout="this.style.boxShadow='none';">Eliminar</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

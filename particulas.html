@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serpiente de Energía - Efecto Cursor</title>
+    <style>
+        :root {
+            --bg: #020510;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            overflow: hidden;
+            cursor: none;
+            height: 100vh;
+            width: 100vw;
+            font-family: 'Segoe UI', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .cursor-core {
+            position: fixed;
+            width: 14px;
+            height: 14px;
+            background: #ffffff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            box-shadow:
+                0 0 8px #ffffff,
+                0 0 25px #ffffff,
+                0 0 50px #ff88cc,
+                0 0 100px #ff44aa,
+                0 0 160px #ff2288;
+            transition: width 0.12s ease, height 0.12s ease;
+        }
+
+        .cursor-aura {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255, 200, 230, 0.5);
+            animation: auraSpin 3s linear infinite;
+            box-shadow: 0 0 30px rgba(255, 120, 180, 0.4), inset 0 0 20px rgba(255, 150, 200, 0.2);
+        }
+
+        @keyframes auraSpin {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) rotate(180deg) scale(1.3);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg) scale(1);
+            }
+        }
+
+        .info {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 220, 240, 0.65);
+            font-size: 13px;
+            letter-spacing: 4px;
+            z-index: 5;
+            pointer-events: none;
+            text-shadow: 0 0 15px #ff66bb;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-core" id="cursorCore"></div>
+    <div class="cursor-aura" id="cursorAura"></div>
+    <canvas id="canvas"></canvas>
+    <div class="info">🐉 SERPIENTE DE ENERGÍA 🐉</div>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const cursorCore = document.getElementById('cursorCore');
+            const cursorAura = document.getElementById('cursorAura');
+
+            let width, height;
+            let mouseX = -500;
+            let mouseY = -500;
+            let targetMouseX = -500;
+            let targetMouseY = -500;
+            let mouseOnScreen = false;
+            let mouseSpeed = 0;
+            let prevMouseX = -500;
+            let prevMouseY = -500;
+
+            // Configuración de la serpiente
+            const SEGMENT_COUNT = 50; // Número de segmentos del cuerpo
+            const SEGMENT_SPACING = 6; // Distancia base entre segmentos
+            const FOLLOW_SPEED = 0.12; // Qué tan rápido sigue al cursor (cabeza)
+            const WAVE_AMPLITUDE = 30; // Amplitud de la ondulación lateral
+            const WAVE_FREQUENCY = 0.04; // Frecuencia de ondulación
+            const BODY_THICKNESS_BASE = 9; // Grosor base del cuerpo
+
+            // Partículas orbitales
+            const ORBITAL_PARTICLES = 60;
+            const orbitalParticles = [];
+
+            // Rastro mágico
+            const magicTrail = [];
+            const MAX_MAGIC_TRAIL = 40;
+
+            // Tiempo para cambio de color
+            let hueShift = 0;
+            let targetHue = 280; // Púrpura inicial
+
+            // Segmentos de la serpiente
+            const segments = [];
+            for (let i = 0; i < SEGMENT_COUNT; i++) {
+                segments.push({
+                    x: -200,
+                    y: -200,
+                    prevX: -200,
+                    prevY: -200,
+                    angle: 0,
+                });
+            }
+
+            // Inicializar partículas orbitales
+            for (let i = 0; i < ORBITAL_PARTICLES; i++) {
+                orbitalParticles.push({
+                    angle: Math.random() * Math.PI * 2,
+                    radius: 8 + Math.random() * 18,
+                    speed: 0.02 + Math.random() * 0.06,
+                    size: 1 + Math.random() * 2.5,
+                    phaseOffset: Math.random() * Math.PI * 2,
+                    verticalOsc: Math.random() * 0.5 + 0.5,
+                });
+            }
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+
+            function hslToRgb(h, s, l) {
+                h /= 360;
+                let r, g, b;
+                if (s === 0) {
+                    r = g = b = l;
+                } else {
+                    const hue2rgb = (p, q, t) => {
+                        if (t < 0) t += 1;
+                        if (t > 1) t -= 1;
+                        if (t < 1 / 6) return p + (q - p) * 6 * t;
+                        if (t < 1 / 2) return q;
+                        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                        return p;
+                    };
+                    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                    const p = 2 * l - q;
+                    r = hue2rgb(p, q, h + 1 / 3);
+                    g = hue2rgb(p, q, h);
+                    b = hue2rgb(p, q, h - 1 / 3);
+                }
+                return {
+                    r: Math.round(r * 255),
+                    g: Math.round(g * 255),
+                    b: Math.round(b * 255)
+                };
+            }
+
+            function getDynamicColor(offset = 0) {
+                const hue = (hueShift + offset) % 360;
+                return hslToRgb(hue, 0.9, 0.55);
+            }
+
+            function updateSegments() {
+                if (!mouseOnScreen && mouseX < -400) return;
+
+                // La cabeza sigue al mouse con suavizado
+                const head = segments[0];
+                const dx = mouseX - head.x;
+                const dy = mouseY - head.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                // Velocidad de seguimiento adaptativa
+                const followSpeed = FOLLOW_SPEED + Math.min(dist * 0.002, 0.15);
+
+                head.prevX = head.x;
+                head.prevY = head.y;
+                head.x += dx * followSpeed;
+                head.y += dy * followSpeed;
+                head.angle = Math.atan2(dy, dx);
+
+                // Ondulación y propagación hacia atrás
+                for (let i = 1; i < segments.length; i++) {
+                    const seg = segments[i];
+                    const prevSeg = segments[i - 1];
+
+                    seg.prevX = seg.x;
+                    seg.prevY = seg.y;
+
+                    // Dirección hacia el segmento anterior
+                    const sdx = prevSeg.x - seg.x;
+                    const sdy = prevSeg.y - seg.y;
+                    const sdist = Math.sqrt(sdx * sdx + sdy * sdy) || 1;
+
+                    // Distancia deseada
+                    const desiredDist = SEGMENT_SPACING;
+
+                    // Mover hacia el segmento anterior manteniendo la distancia
+                    const moveRatio = (sdist - desiredDist) / sdist;
+                    seg.x += sdx * moveRatio * 0.7;
+                    seg.y += sdy * moveRatio * 0.7;
+
+                    // Añadir ondulación sinusoidal lateral
+                    const waveOffset = i * WAVE_FREQUENCY * 10;
+                    const wave = Math.sin(performance.now() * 0.004 + waveOffset) * WAVE_AMPLITUDE * (i / SEGMENT_COUNT);
+                    const perpX = -sdy / sdist;
+                    const perpY = sdx / sdist;
+                    seg.x += perpX * wave * 0.05;
+                    seg.y += perpY * wave * 0.05;
+
+                    seg.angle = Math.atan2(sdy, sdx);
+                }
+
+                // Añadir al rastro mágico cuando el mouse se mueve rápido
+                if (mouseSpeed > 2 && mouseOnScreen) {
+                    magicTrail.push({
+                        x: segments[Math.floor(SEGMENT_COUNT * 0.7)].x,
+                        y: segments[Math.floor(SEGMENT_COUNT * 0.7)].y,
+                        life: 1,
+                        size: 3 + mouseSpeed * 0.8,
+                        hue: hueShift,
+                    });
+                    if (magicTrail.length > MAX_MAGIC_TRAIL) magicTrail.shift();
+                }
+            }
+
+            function drawSerpent() {
+                if (segments[0].x < -300) return;
+
+                ctx.save();
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                // Dibujar cuerpo principal con gradiente de color
+                for (let i = 0; i < segments.length - 1; i++) {
+                    const seg = segments[i];
+                    const nextSeg = segments[i + 1];
+
+                    const lifeRatio = 1 - i / SEGMENT_COUNT;
+                    const thickness = BODY_THICKNESS_BASE * lifeRatio + 1;
+
+                    // Color basado en la posición del segmento
+                    const colorOffset = i * 3;
+                    const col = getDynamicColor(colorOffset);
+                    const alpha = 0.7 + lifeRatio * 0.3;
+
+                    // Gradiente entre segmentos
+                    const gradient = ctx.createLinearGradient(seg.x, seg.y, nextSeg.x, nextSeg.y);
+                    const colNext = getDynamicColor((i + 1) * 3);
+                    gradient.addColorStop(0,
+                        `rgba(${col.r},${col.g},${col.b},${alpha})`);
+                    gradient.addColorStop(1,
+                        `rgba(${colNext.r},${colNext.g},${colNext.b},${alpha})`);
+
+                    ctx.beginPath();
+                    ctx.moveTo(seg.x, seg.y);
+                    ctx.lineTo(nextSeg.x, nextSeg.y);
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = thickness;
+                    ctx.shadowColor = `rgba(${col.r},${col.g},${col.b},${alpha * 0.9})`;
+                    ctx.shadowBlur = thickness * 2.5;
+                    ctx.stroke();
+                }
+
+                // Línea central brillante (núcleo de energía)
+                for (let i = 0; i < segments.length - 1; i++) {
+                    const seg = segments[i];
+                    const nextSeg = segments[i + 1];
+                    const lifeRatio = 1 - i / SEGMENT_COUNT;
+                    const alpha = 0.8 + lifeRatio * 0.2;
+
+                    ctx.beginPath();
+                    ctx.moveTo(seg.x, seg.y);
+                    ctx.lineTo(nextSeg.x, nextSeg.y);
+                    ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.7})`;
+                    ctx.lineWidth = BODY_THICKNESS_BASE * lifeRatio * 0.35;
+                    ctx.shadowColor = `rgba(255,255,255,${alpha})`;
+                    ctx.shadowBlur = BODY_THICKNESS_BASE * lifeRatio * 1.5;
+                    ctx.stroke();
+                }
+                ctx.shadowBlur = 0;
+                ctx.restore();
+
+                // Dibujar cabeza brillante
+                const head = segments[0];
+                const headCol = getDynamicColor(0);
+                const headGradient = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 25);
+                headGradient.addColorStop(0, 'rgba(255,255,255,1)');
+                headGradient.addColorStop(0.2, `rgba(${headCol.r},${headCol.g},${headCol.b},0.9)`);
+                headGradient.addColorStop(0.5, `rgba(${headCol.r},${headCol.g},${headCol.b},0.5)`);
+                headGradient.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.beginPath();
+                ctx.arc(head.x, head.y, 22, 0, Math.PI * 2);
+                ctx.fillStyle = headGradient;
+                ctx.fill();
+
+                // Ojos brillantes
+                const eyeAngle = head.angle;
+                const eyeDist = 7;
+                for (let side = -1; side <= 1; side += 2) {
+                    const ex = head.x + Math.cos(eyeAngle + side * 0.7) * eyeDist;
+                    const ey = head.y + Math.sin(eyeAngle + side * 0.7) * eyeDist;
+                    const eyeGrad = ctx.createRadialGradient(ex, ey, 0, ex, ey, 4);
+                    eyeGrad.addColorStop(0, '#ffffff');
+                    eyeGrad.addColorStop(0.5, '#ffddff');
+                    eyeGrad.addColorStop(1, 'rgba(255,100,200,0)');
+                    ctx.beginPath();
+                    ctx.arc(ex, ey, 4.5, 0, Math.PI * 2);
+                    ctx.fillStyle = eyeGrad;
+                    ctx.fill();
+                }
+            }
+
+            function drawOrbitalParticles() {
+                const now = performance.now() * 0.001;
+                for (const op of orbitalParticles) {
+                    // Calcular a qué segmento del cuerpo está asociada esta partícula
+                    const segIndex = Math.floor((op.phaseOffset / (Math.PI * 2)) * SEGMENT_COUNT) % SEGMENT_COUNT;
+                    const seg = segments[Math.min(segIndex, segments.length - 1)];
+
+                    if (seg.x < -300) continue;
+
+                    const angle = op.angle + now * op.speed;
+                    const radius = op.radius + Math.sin(now * 2 + op.phaseOffset) * 4;
+                    const px = seg.x + Math.cos(angle) * radius;
+                    const py = seg.y + Math.sin(angle) * radius * op.verticalOsc;
+
+                    const lifeRatio = 1 - segIndex / SEGMENT_COUNT;
+                    const col = getDynamicColor(segIndex * 2 + now * 20);
+                    const alpha = 0.5 + lifeRatio * 0.5;
+
+                    const gradient = ctx.createRadialGradient(px, py, 0, px, py, op.size * 3);
+                    gradient.addColorStop(0, `rgba(255,255,255,${alpha})`);
+                    gradient.addColorStop(0.3, `rgba(${col.r},${col.g},${col.b},${alpha})`);
+                    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.beginPath();
+                    ctx.arc(px, py, op.size * 3, 0, Math.PI * 2);
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+
+                    // Núcleo
+                    ctx.beginPath();
+                    ctx.arc(px, py, op.size * 0.7, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${alpha * 0.9})`;
+                    ctx.fill();
+                }
+            }
+
+            function drawMagicTrail() {
+                for (let i = magicTrail.length - 1; i >= 0; i--) {
+                    const t = magicTrail[i];
+                    t.life -= 0.025;
+                    if (t.life <= 0) {
+                        magicTrail.splice(i, 1);
+                        continue;
+                    }
+                    const col = hslToRgb(t.hue, 0.8, 0.6);
+                    const gradient = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, t.size * 4 * t.life);
+                    gradient.addColorStop(0,
+                        `rgba(${col.r},${col.g},${col.b},${t.life * 0.7})`);
+                    gradient.addColorStop(0.4,
+                        `rgba(${col.r},${col.g},${col.b},${t.life * 0.3})`);
+                    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, t.size * 4 * t.life, 0, Math.PI * 2);
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                }
+            }
+
+            function drawCursorGlow() {
+                if (!mouseOnScreen) return;
+                const col = getDynamicColor(0);
+                const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 70);
+                gradient.addColorStop(0,
+                    `rgba(${col.r},${col.g},${col.b},0.25)`);
+                gradient.addColorStop(0.3,
+                    `rgba(${col.r},${col.g},${col.b},0.1)`);
+                gradient.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 70, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Anillos pulsantes
+                const pulse = Math.sin(performance.now() * 0.006) * 0.5 + 0.5;
+                for (let r = 20; r <= 60; r += 20) {
+                    const alpha = (1 - r / 60) * 0.2 * pulse;
+                    ctx.beginPath();
+                    ctx.arc(mouseX, mouseY, r, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(255,220,240,${alpha})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+
+            function animate(timestamp) {
+                ctx.clearRect(0, 0, width, height);
+
+                // Fondo dinámico sutil
+                const bgGrad = ctx.createRadialGradient(
+                    mouseX > -400 ? mouseX : width / 2,
+                    mouseY > -400 ? mouseY : height / 2,
+                    0,
+                    mouseX > -400 ? mouseX : width / 2,
+                    mouseY > -400 ? mouseY : height / 2,
+                    Math.max(width, height) * 0.7
+                );
+                bgGrad.addColorStop(0, 'rgba(15,5,25,0.5)');
+                bgGrad.addColorStop(1, 'rgba(2,1,8,0)');
+                ctx.fillStyle = bgGrad;
+                ctx.fillRect(0, 0, width, height);
+
+                // Suavizar mouse
+                mouseX += (targetMouseX - mouseX) * 0.3;
+                mouseY += (targetMouseY - mouseY) * 0.3;
+
+                // Calcular velocidad del mouse
+                const dmx = targetMouseX - prevMouseX;
+                const dmy = targetMouseY - prevMouseY;
+                mouseSpeed = Math.sqrt(dmx * dmx + dmy * dmy);
+                prevMouseX = targetMouseX;
+                prevMouseY = targetMouseY;
+
+                // Cambiar el tono de color gradualmente
+                targetHue += mouseSpeed * 0.8;
+                if (targetHue > 360) targetHue -= 360;
+                hueShift += (targetHue - hueShift) * 0.03;
+                if (hueShift > 360) hueShift -= 360;
+
+                // Actualizar segmentos de la serpiente
+                updateSegments();
+
+                // Dibujar elementos
+                drawMagicTrail();
+                drawCursorGlow();
+                drawSerpent();
+                drawOrbitalParticles();
+
+                requestAnimationFrame(animate);
+            }
+
+            // Eventos
+            document.addEventListener('mousemove', (e) => {
+                targetMouseX = e.clientX;
+                targetMouseY = e.clientY;
+                cursorCore.style.left = e.clientX + 'px';
+                cursorCore.style.top = e.clientY + 'px';
+                cursorAura.style.left = e.clientX + 'px';
+                cursorAura.style.top = e.clientY + 'px';
+                if (!mouseOnScreen) {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    // Inicializar segmentos en la posición del mouse
+                    for (const seg of segments) {
+                        seg.x = e.clientX;
+                        seg.y = e.clientY;
+                        seg.prevX = e.clientX;
+                        seg.prevY = e.clientY;
+                    }
+                }
+                mouseOnScreen = true;
+            });
+
+            document.addEventListener('mouseenter', (e) => {
+                targetMouseX = e.clientX;
+                targetMouseY = e.clientY;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                prevMouseX = e.clientX;
+                prevMouseY = e.clientY;
+                cursorCore.style.opacity = '1';
+                cursorAura.style.opacity = '1';
+                mouseOnScreen = true;
+                for (const seg of segments) {
+                    seg.x = e.clientX;
+                    seg.y = e.clientY;
+                    seg.prevX = e.clientX;
+                    seg.prevY = e.clientY;
+                }
+            });
+
+            document.addEventListener('mouseleave', () => {
+                mouseOnScreen = false;
+                targetMouseX = -1000;
+                targetMouseY = -1000;
+                cursorCore.style.opacity = '0';
+                cursorAura.style.opacity = '0';
+            });
+
+            // Touch
+            document.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const t = e.touches[0];
+                targetMouseX = t.clientX;
+                targetMouseY = t.clientY;
+                cursorCore.style.left = t.clientX + 'px';
+                cursorCore.style.top = t.clientY + 'px';
+                cursorAura.style.left = t.clientX + 'px';
+                cursorAura.style.top = t.clientY + 'px';
+                cursorCore.style.opacity = '1';
+                cursorAura.style.opacity = '1';
+                if (!mouseOnScreen) {
+                    mouseX = t.clientX;
+                    mouseY = t.clientY;
+                    prevMouseX = t.clientX;
+                    prevMouseY = t.clientY;
+                    for (const seg of segments) {
+                        seg.x = t.clientX;
+                        seg.y = t.clientY;
+                        seg.prevX = t.clientX;
+                        seg.prevY = t.clientY;
+                    }
+                }
+                mouseOnScreen = true;
+            }, { passive: false });
+
+            document.addEventListener('touchend', () => {
+                mouseOnScreen = false;
+                targetMouseX = -1000;
+                targetMouseY = -1000;
+                cursorCore.style.opacity = '0';
+                cursorAura.style.opacity = '0';
+            });
+
+            window.addEventListener('resize', resize);
+
+            resize();
+            requestAnimationFrame(animate);
+
+            console.log('🐉 Serpiente de Energía invocada');
+            console.log('   - ' + SEGMENT_COUNT + ' segmentos ondulantes');
+            console.log('   - ' + ORBITAL_PARTICLES + ' partículas orbitales');
+            console.log('   - Color dinámico que cambia con la velocidad');
+            console.log('   - ¡Muévete rápido para ver la magia! ✨');
+        })();
+    </script>
+</body>
+</html>

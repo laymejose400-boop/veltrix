@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | Veltrix</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+    <canvas id="particulas"></canvas>
+    <canvas id="canvasHielo" style="position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none;"></canvas>
+    <div class="cursor-hielo-punto" id="cursorHielo"></div>
+
+    <!-- Barra de navegación -->
+    <header class="navbar">
+        <div class="navbar-contenedor">
+            <a href="index.html" class="logo">
+    <img src="imagenes/LOGO.png" alt="Veltrix" class="logo-img">
+</a>
+            <nav class="nav-links" id="navLinks">
+    <div class="nav-bloque nav-exploracion" id="navExploracion">
+        <a href="index.html">Inicio</a>
+        <a href="sobre-nosotros.html">Sobre Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+    </div>
+
+    <div class="nav-separador" id="navSeparador"></div>
+
+    <div class="nav-bloque nav-acciones">
+        <a href="mis-pedidos.html" id="linkPedidos"><i class="fa-solid fa-box"></i> Mis Pedidos</a>
+        <a href="carrito.html" id="linkCarrito"><i class="fa-solid fa-cart-shopping"></i> Carrito <span id="contadorCarrito" class="badge">0</span></a>
+        
+        <div class="nav-usuario" id="navUsuario" style="display:none;">
+            <button class="nav-usuario-btn" id="btnUsuario">
+                <span id="linkNombre">👤 Usuario</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="nav-usuario-menu" id="menuUsuario">
+                <a href="perfil.html" id="linkPerfil" class="activo"><i class="fa-solid fa-user-gear"></i> Mi Perfil</a>
+                <a href="#" id="linkLogout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+            </div>
+        </div>
+
+        <a href="login.html" id="linkLogin"><i class="fa-solid fa-user"></i> Iniciar Sesión</a>
+        <a href="admin/productos.html" id="linkAdmin" style="display:none;"><i class="fa-solid fa-gear"></i> Admin</a>
+
+        <button id="btnTema" style="background:none; border:none; color: #ffffff; cursor:pointer; font-size:1.1rem;" onclick="cambiarTema()" title="Cambiar tema">
+            <i class="fa-solid fa-palette"></i>
+        </button>
+    </div>
+</nav>
+            <button class="menu-hamburguesa" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido del perfil -->
+    <main class="perfil-contenedor">
+        <h1 class="titulo-seccion" data-aos="fade-down">Mi Perfil</h1>
+
+        <div class="perfil-grid">
+            <!-- Datos personales -->
+            <div class="auth-tarjeta" data-aos="fade-up">
+                <h3 class="resumen-titulo"><i class="fa-solid fa-id-card"></i> Datos Personales</h3>
+                <form id="formPerfil" class="auth-form">
+                    <div class="input-grupo">
+                        <label><i class="fa-solid fa-user"></i> Nombre</label>
+                        <input type="text" id="perfilNombre" required>
+                    </div>
+                    <div class="input-grupo">
+                        <label><i class="fa-solid fa-envelope"></i> Email</label>
+                        <input type="email" id="perfilEmail" required>
+                    </div>
+                    <div class="auth-error" id="errorPerfil" style="display:none;"></div>
+                    <button type="submit" class="boton-auth" id="btnGuardarPerfil">
+                        <span>Guardar Cambios</span>
+                        <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Direcciones -->
+            <div class="auth-tarjeta" data-aos="fade-up" data-aos-delay="200">
+                <h3 class="resumen-titulo"><i class="fa-solid fa-map-location-dot"></i> Mis Direcciones</h3>
+                <div id="listaDirecciones" style="margin-bottom: 20px;">
+                    <p style="color:#888;">Cargando direcciones...</p>
+                </div>
+                <button class="btn-detalle" style="width:100%;" onclick="mostrarFormDireccion()">
+                    <i class="fa-solid fa-plus"></i> Nueva Dirección
+                </button>
+
+                <div id="formDireccion" style="display:none; margin-top: 20px;">
+    <div class="input-grupo">
+        <label>Calle</label>
+        <input type="text" id="dirCalle" placeholder="Av. Principal 123">
+    </div>
+    <div class="input-grupo">
+        <label>Ciudad</label>
+        <input type="text" id="dirCiudad" placeholder="Lima">
+    </div>
+    <div class="input-grupo">
+        <label>Código Postal</label>
+        <input type="text" id="dirCodigoPostal" placeholder="15001">
+    </div>
+    <div class="input-grupo">
+        <label>País</label>
+        <input type="text" id="dirPais" placeholder="Perú">
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <button class="boton-auth" onclick="guardarDireccion()" style="flex:1;">
+            <i class="fa-solid fa-save"></i> Guardar
+        </button>
+        <button onclick="cancelarDireccion()" style="background: transparent; border: 1px solid var(--borde); color: var(--texto); padding: 14px 30px; border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 1rem; height: 48px; line-height: 1; margin-top: 8px;">Cancelar</button>
+    </div>
+</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-contenedor">
+            <div class="footer-col">
+                <h3><i class="fa-solid fa-bolt"></i> VELTRIX</h3>
+                <p>Tu tienda de tecnología de confianza</p>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <a href="index.html">Inicio</a>
+                <a href="carrito.html">Carrito</a>
+                <a href="mis-pedidos.html">Mis Pedidos</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fa-solid fa-envelope"></i> soporte@veltrix.com</p>
+                <p><i class="fa-solid fa-phone"></i> +51 999 888 777</p>
+            </div>
+        </div>
+        <div class="footer-copy">
+            <p>&copy; 2026 Veltrix. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/particulas.js"></script>
+    <script src="js/cursor-hielo.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/perfil.js"></script>
+
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+</html>

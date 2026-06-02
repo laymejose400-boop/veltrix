@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajes de Contacto | Veltrix Admin</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
+
+    <canvas id="particulas"></canvas>
+    <canvas id="canvasHielo" style="position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none;"></canvas>
+    <div class="cursor-hielo-punto" id="cursorHielo"></div>
+
+    <!-- Barra de navegación admin -->
+    <header class="navbar">
+        <div class="navbar-contenedor">
+            <a href="../index.html" class="logo">
+                <img src="../imagenes/LOGO.png" alt="Veltrix" class="logo-img">
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <div class="nav-bloque nav-acciones" style="margin-left: auto;">
+                    <a href="productos.html"><i class="fa-solid fa-box"></i> Productos</a>
+                    <a href="pedidos.html"><i class="fa-solid fa-truck-fast"></i> Pedidos</a>
+                    <a href="contactos.html" class="activo"><i class="fa-solid fa-message"></i> Mensajes</a>
+                    
+                    <div class="nav-usuario" id="navUsuario" style="display:none;">
+                        <button class="nav-usuario-btn" id="btnUsuario">
+                            <span id="linkNombre">👤 Admin</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div class="nav-usuario-menu" id="menuUsuario">
+                            <a href="../perfil.html"><i class="fa-solid fa-user-gear"></i> Mi Perfil</a>
+                            <a href="#" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+                        </div>
+                    </div>
+
+                    <a href="../login.html" id="linkLogin"><i class="fa-solid fa-user"></i> Iniciar Sesión</a>
+
+                    <button id="btnTema" style="background:none; border:none; color: #ffffff; cursor:pointer; font-size:1.1rem;" onclick="cambiarTema()" title="Cambiar tema">
+                        <i class="fa-solid fa-palette"></i>
+                    </button>
+                </div>
+            </nav>
+            <button class="menu-hamburguesa" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido -->
+    <main class="admin-contenedor">
+        <h1 class="titulo-seccion" data-aos="fade-down">Mensajes de Contacto</h1>
+
+        <div class="admin-tabla-contenedor" data-aos="fade-up">
+            <table class="admin-tabla">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Mensaje</th>
+                        <th>Fecha</th>
+                        <th style="min-width: 140px;">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyMensajes">
+                    <!-- Se llena con JS -->
+                </tbody>
+            </table>
+            <div class="cargando" id="cargandoMensajes">
+                <div class="spinner-3d"></div>
+                <p>Cargando mensajes...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../js/particulas.js"></script>
+    <script src="../js/cursor-hielo.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        if (obtenerRol() !== 'ADMIN') {
+            window.location.href = '../login.html';
+        }
+
+        async function cargarMensajes() {
+            try {
+                document.getElementById('cargandoMensajes').style.display = 'block';
+                const res = await apiFetch('/contactos');
+                const mensajes = await res.json();
+                document.getElementById('cargandoMensajes').style.display = 'none';
+
+                const tbody = document.getElementById('tbodyMensajes');
+
+                if (mensajes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:#888;">No hay mensajes recibidos</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = mensajes.map(m => {
+                    const fecha = new Date(m.creadoEn).toLocaleDateString('es-PE', {
+                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+                    return `
+                        <tr>
+                            <td>${m.nombre}</td>
+                            <td>${m.email}</td>
+                            <td>${m.telefono}</td>
+                            <td>${m.mensaje}</td>
+                            <td>${fecha}</td>
+                            <td>
+                                <a href="https://wa.me/${m.telefono.replace(/[^0-9]/g, '')}" target="_blank" class="btn-accion editar" title="Responder por WhatsApp" style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+    <i class="fa-brands fa-whatsapp"></i> Responder
+</a>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('cargandoMensajes').style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', cargarMensajes);
+    </script>
+</body>
+</html>

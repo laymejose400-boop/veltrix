@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veltrix | Tecnología del Futuro</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS (animaciones al scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="css/estilo.css">
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+
+<!-- Loading Screen -->
+<div id="loadingScreen">
+    <div class="loading-content">
+        <div class="loading-logo">
+            <img src="imagenes/LOGO.png" alt="Veltrix" class="loading-logo-img">
+        </div>
+        <div class="loading-text">Cargando Experiencia</div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+        <div class="loading-particulas">
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+    </div>
+</div>
+
+    <!-- Partículas de fondo (canvas) -->
+    <canvas id="particulas"></canvas>
+    <canvas id="canvasHielo" style="position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none;"></canvas>
+    <div class="cursor-hielo-punto" id="cursorHielo"></div>
+
+    <!-- Barra de navegación -->
+<header class="navbar">
+    <div class="navbar-contenedor">
+        <a href="index.html" class="logo">
+            <img src="imagenes/LOGO.png" alt="Veltrix" class="logo-img">
+        </a>
+        <nav class="nav-links" id="navLinks">
+    <!-- Bloque Exploración (Izquierda) -->
+    <div class="nav-bloque nav-exploracion">
+        <a href="index.html" class="activo">Inicio</a>
+        <a href="sobre-nosotros.html">Sobre Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+    </div>
+
+    <!-- Separador visual -->
+    <div class="nav-separador"></div>
+
+    <!-- Bloque Usuario y Compra (Derecha) -->
+    <div class="nav-bloque nav-acciones">
+        <a href="mis-pedidos.html" id="linkPedidos"><i class="fa-solid fa-box"></i> Mis Pedidos</a>
+        <a href="carrito.html" id="linkCarrito"><i class="fa-solid fa-cart-shopping"></i> Carrito <span id="contadorCarrito" class="badge">0</span></a>
+        
+        <!-- Menú de usuario -->
+        <div class="nav-usuario" id="navUsuario" style="display:none;">
+            <button class="nav-usuario-btn" id="btnUsuario">
+                <span id="linkNombre">👤 Usuario</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="nav-usuario-menu" id="menuUsuario">
+                <a href="perfil.html" id="linkPerfil"><i class="fa-solid fa-user-gear"></i> Mi Perfil</a>
+                <a href="#" id="linkLogout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+            </div>
+        </div>
+
+        <a href="login.html" id="linkLogin"><i class="fa-solid fa-user"></i> Iniciar Sesión</a>
+        <a href="admin/productos.html" id="linkAdmin" style="display:none;"><i class="fa-solid fa-gear"></i> Admin</a>
+
+        <button id="btnTema" style="background:none; border:none; color: #ffffff; cursor:pointer; font-size:1.1rem;" onclick="cambiarTema()" title="Cambiar tema">
+            <i class="fa-solid fa-palette"></i>
+        </button>
+    </div>
+</nav>
+        <button class="menu-hamburguesa" id="menuToggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+</header>
+
+    <!-- Hero Cinematic -->
+<section class="hero-cinematic">
+    <div class="hero-particulas"></div>
+    <div class="hero-brillo"></div>
+    <div class="hero-contenido" data-aos="fade-up" data-aos-duration="1000">
+        <span class="hero-etiqueta">Nueva Generación</span>
+        <h1 class="hero-titulo">
+            Tecnología que <span class="hero-gradiente">impulsa</span> tu mundo
+        </h1>
+        <p class="hero-subtitulo">
+            Descubre dispositivos diseñados para el futuro. Rendimiento extremo, diseño minimalista, experiencia premium.
+        </p>
+        <div class="hero-botones">
+            <a href="#catalogo" class="boton-hero">
+                <span>Explorar Productos</span>
+                <i class="fa-solid fa-arrow-down"></i>
+            </a>
+            <a href="detalle.html?id=22" class="boton-hero boton-secundario">
+                <span>Ver Destacado</span>
+                <i class="fa-solid fa-star"></i>
+            </a>
+        </div>
+    </div>
+    <div class="hero-modelo" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="300">
+        <model-viewer 
+            src="modelos/iphone_17_pro_max_gold.glb"
+            auto-rotate
+            camera-controls
+            interaction-prompt="none"
+            exposure="1.5"
+            shadow-intensity="0.4"
+            environment-image="neutral"
+            camera-orbit="45deg 75deg 8m"
+            field-of-view="25deg"
+            style="width: 100%; height: 500px;">
+        </model-viewer>
+    </div>
+</section>>
+
+        <!-- Sección Premium – Audífono 3D -->
+    <section class="seccion-premium">
+        <div class="premium-grid">
+            <!-- Columna de texto -->
+            <div class="premium-texto" data-aos="fade-right">
+                <span class="premium-etiqueta">Nuevo lanzamiento</span>
+                <h2 class="premium-titulo">
+                    Sonido que te <span class="gradiente-texto">envuelve</span>
+                </h2>
+                <p class="premium-descripcion">
+                    Audífonos Veltrix Pro con cancelación de ruido activa, 
+                    drivers de 40 mm y 30 horas de batería. La experiencia 
+                    auditiva definitiva.
+                </p>
+                <ul class="premium-caracteristicas">
+                    <li><i class="fa-solid fa-volume-high"></i> Cancelación de ruido ANC</li>
+                    <li><i class="fa-solid fa-bluetooth"></i> Bluetooth 5.3</li>
+                    <li><i class="fa-solid fa-battery-full"></i> 30 h de autonomía</li>
+                </ul>
+                <a href="detalle.html?id=32" class="boton-premium">
+                    <span>Explorar</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Columna del modelo 3D -->
+            <div class="premium-modelo" data-aos="fade-left">
+                
+    <model-viewer 
+    src="modelos/nothing_buds_2_pro.glb"
+
+    auto-rotate
+    camera-controls
+    autoplay
+    animation-name="*"
+
+    exposure="1.3"
+    shadow-intensity="0.6"
+
+    environment-image="neutral"
+
+    camera-orbit="45deg 75deg 12m"
+
+    field-of-view="20deg"
+
+    style="
+        width:100%;
+        height:100vh;
+    ">
+</model-viewer>
+            </div>
+        </div>
+    </section>
+    
+
+
+    <!-- Filtro por categoría -->
+<section class="seccion-filtro" id="catalogo" data-aos="fade-up">
+    <div class="contenedor">
+        <h2 class="titulo-seccion">Nuestro Catálogo</h2>
+        
+        <!-- Barra de búsqueda -->
+        <div class="busqueda-contenedor">
+            <div class="busqueda-input">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="busquedaProductos" placeholder="Buscar productos...">
+            </div>
+        </div>
+
+        <div class="filtro-categorias">
+            <button class="filtro-btn activo" data-categoria="">Todos</button>
+        </div>
+    </div>
+</section>
+
+    <!-- Catálogo de productos -->
+    <section class="seccion-productos">
+        <div class="contenedor">
+            <div class="catalogo-grid" id="catalogoProductos">
+                <!-- Se llena con JavaScript -->
+            </div>
+
+            <div id="verMasContenedor" style="text-align: center; margin-top: 30px; display: none;">
+                <a id="btnVerMas" href="#" class="boton-hero" style="padding: 12px 30px; font-size: 0.9rem;">
+                Ver más <span id="verMasCategoria"></span> →
+                </a>
+            </div>
+            <div class="cargando" id="cargando">
+                <div class="spinner-3d"></div>
+                <p>Cargando productos...</p>
+            </div>
+        </div>
+    </section>
+
+            <!-- Marquee triple con imágenes de productos -->
+    <section class="seccion-marquee-triple">
+        <p class="marquee-titulo">Productos destacados</p>
+        <div class="marquee-triple-contenedor">
+            <!-- Fila 1: laptops y monitores (hacia la izquierda) -->
+            <div class="fila-marquee fila-izquierda">
+                <div class="marquee-contenido">
+                    <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=200&h=140&fit=crop" alt="Laptop">
+                    <img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=200&h=140&fit=crop" alt="Laptop">
+                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&h=140&fit=crop" alt="Laptop Gamer">
+                    <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=200&h=140&fit=crop" alt="PC">
+                    <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=200&h=140&fit=crop" alt="Monitor">
+                    <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=200&h=140&fit=crop" alt="Laptop">
+                    <img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=200&h=140&fit=crop" alt="Laptop">
+                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&h=140&fit=crop" alt="Laptop Gamer">
+                    <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=200&h=140&fit=crop" alt="PC">
+                    <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=200&h=140&fit=crop" alt="Monitor">
+                </div>
+            </div>
+
+            <!-- Fila 2: smartphones y tablets (hacia la derecha) -->
+            <div class="fila-marquee fila-derecha">
+                <div class="marquee-contenido">
+                    <img src="https://pe.tiendasishop.com/cdn/shop/files/IMG-18068253_m_jpeg_1_829b49c5-3f04-4ab0-a068-6a253f11e453.jpg?v=1757449872" alt="Smartphone1">
+                    <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=200&h=140&fit=crop" alt="Smartphone2">
+                    <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=200&h=140&fit=crop" alt="Smartphone3">
+                    <img src="https://images.unsplash.com/photo-1580910051074-3eb694886505?w=200&h=140&fit=crop" alt="Tablet">
+                    <img src="https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=200&h=140&fit=crop" alt="iPhone">
+                    <img src="https://www.digitaltrends.com/wp-content/uploads/2023/03/Galaaxy-A54-Green-Back.jpg?p=1" alt="Smartphone4">
+                    <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=200&h=140&fit=crop" alt="Smartphone5">
+                    <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=200&h=140&fit=crop" alt="Smartphone6">
+                    <img src="https://images.unsplash.com/photo-1580910051074-3eb694886505?w=200&h=140&fit=crop" alt="Tablet">
+                    <img src="https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=200&h=140&fit=crop" alt="iPhone">
+                </div>
+            </div>
+
+            <!-- Fila 3: accesorios (teclados, audífonos, mouse) (hacia la izquierda) -->
+            <div class="fila-marquee fila-izquierda">
+                <div class="marquee-contenido">
+                    <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=200&h=140&fit=crop" alt="Teclado RGB">
+                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=140&fit=crop" alt="Audífonos">
+                    <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=200&h=140&fit=crop" alt="Mouse">
+                    <img src="https://cdn.shopify.com/s/files/1/0573/0979/0291/files/3_ad96db20-e898-4344-9b0a-00b45303d860_3.webp?v=1756446825" alt="Cargador">
+                    <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=200&h=140&fit=crop" alt="Tarjeta gráfica">
+                    <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=200&h=140&fit=crop" alt="Teclado RGB">
+                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=140&fit=crop" alt="Audífonos">
+                    <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=200&h=140&fit=crop" alt="Mouse">
+                    <img src="https://m.media-amazon.com/images/I/51pFdzzwjBL._AC_UF1000,1000_QL80_.jpg" alt="Cargador">
+                    <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=200&h=140&fit=crop" alt="Tarjeta gráfica">
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- Carrusel de testimonios -->
+    <section class="seccion-testimonios" data-aos="fade-up">
+        <p class="marquee-titulo">Lo que dicen nuestros clientes</p>
+        <div class="testimonios-contenedor">
+            <div class="testimonios-pista" id="testimoniosPista">
+                <div class="testimonio-tarjeta">
+                    <div class="testimonio-estrellas">★★★★★</div>
+                    <p class="testimonio-texto">"Excelente servicio, mi laptop llegó en 2 días y funciona de maravilla. ¡Totalmente recomendado!"</p>
+                    <p class="testimonio-autor">Carlos Mendoza</p>
+                </div>
+                <div class="testimonio-tarjeta">
+                    <div class="testimonio-estrellas">★★★★★</div>
+                    <p class="testimonio-texto">"Compré audífonos y son increíbles. La cancelación de ruido es la mejor que he probado."</p>
+                    <p class="testimonio-autor">Ana López</p>
+                </div>
+                <div class="testimonio-tarjeta">
+                    <div class="testimonio-estrellas">★★★★★</div>
+                    <p class="testimonio-texto">"El teclado mecánico RGB es una locura. Mis partidas de gaming nunca fueron tan épicas."</p>
+                    <p class="testimonio-autor">Luis García</p>
+                </div>
+                <div class="testimonio-tarjeta">
+                    <div class="testimonio-estrellas">★★★★☆</div>
+                    <p class="testimonio-texto">"Muy buena atención al cliente. Me ayudaron a elegir el monitor perfecto para mi setup."</p>
+                    <p class="testimonio-autor">María Fernández</p>
+                </div>
+                <!-- Repetimos para bucle -->
+                <div class="testimonio-tarjeta">
+                    <div class="testimonio-estrellas">★★★★★</div>
+                    <p class="testimonio-texto">"Excelente servicio, mi laptop llegó en 2 días y funciona de maravilla."</p>
+                    <p class="testimonio-autor">Carlos Mendoza</p>
+                </div>
+                <div class="testimonio-tarjeta">
+                    <div class="testimonio-estrellas">★★★★★</div>
+                    <p class="testimonio-texto">"Compré audífonos y son increíbles. Cancelación de ruido top."</p>
+                    <p class="testimonio-autor">Ana López</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- Marquee infinito de marcas -->
+<section class="seccion-marquee">
+    <p class="marquee-titulo">Marcas que confían en Veltrix</p>
+    <div class="marquee-contenedor">
+        <div class="marquee-pista">
+            <img src="https://cdn.worldvectorlogo.com/logos/intel-logo.svg" alt="Intel" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/amd-logo-1.svg" alt="AMD" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/nvidia-wordmark-1.svg" alt="NVIDIA" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/samsung-8.svg" alt="Samsung" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/apple-11.svg" alt="Apple" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/microsoft-6.svg" alt="Microsoft" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/logitech-2.svg" alt="Logitech" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/razer-1.svg" alt="Razer" class="marquee-logo">
+            <!-- Repetimos para bucle infinito -->
+            <img src="https://cdn.worldvectorlogo.com/logos/intel-logo.svg" alt="Intel" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/amd-logo-1.svg" alt="AMD" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/nvidia-wordmark-1.svg" alt="NVIDIA" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/samsung-8.svg" alt="Samsung" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/apple-11.svg" alt="Apple" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/microsoft-6.svg" alt="Microsoft" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/logitech-2.svg" alt="Logitech" class="marquee-logo">
+            <img src="https://cdn.worldvectorlogo.com/logos/razer-1.svg" alt="Razer" class="marquee-logo">
+        </div>
+    </div>
+</section>
+    
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-contenedor">
+            <div class="footer-col">
+                <h3><i class="fa-solid fa-bolt"></i> VELTRIX</h3>
+                <p>Tu tienda de tecnología de confianza</p>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <a href="index.html">Inicio</a>
+                <a href="carrito.html">Carrito</a>
+                <a href="mis-pedidos.html">Mis Pedidos</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fa-solid fa-envelope"></i> soporte@veltrix.com</p>
+                <p><i class="fa-solid fa-phone"></i> +51 929667206</p>
+            </div>
+        </div>
+        <div class="footer-copy">
+            <p>&copy; 2026 Veltrix. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/catalogo.js"></script>
+    <script>
+        // Loading Screen - solo se muestra una vez por sesión
+    if (!sessionStorage.getItem('loadingShown')) {
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var loading = document.getElementById('loadingScreen');
+                loading.classList.add('oculto');
+                sessionStorage.setItem('loadingShown', 'true');
+            }, 2800);
+        });
+    } else {
+        document.getElementById('loadingScreen').style.display = 'none';
+    }
+</script>
+    <script src="js/particulas.js"></script>
+    <script src="js/cursor-hielo.js"></script>
+
+    <script>
+        // Inicializar AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+
+    <!-- Botón flotante de WhatsApp -->
+<a href="https://wa.me/51929667206" target="_blank" class="whatsapp-flotante" title="¿Necesitas ayuda? Chatea con nosotros">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+
+</body>
+</html>
