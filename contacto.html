@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto | Veltrix</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+    <canvas id="particulas"></canvas>
+    <canvas id="canvasHielo" style="position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none;"></canvas>
+    <div class="cursor-hielo-punto" id="cursorHielo"></div>
+
+    <!-- Barra de navegación -->
+    <header class="navbar">
+        <div class="navbar-contenedor">
+            <a href="index.html" class="logo">
+                <img src="imagenes/LOGO.png" alt="Veltrix" class="logo-img">
+            </a>
+            <nav class="nav-links" id="navLinks">
+    <div class="nav-bloque nav-exploracion">
+        <a href="index.html">Inicio</a>
+        <a href="sobre-nosotros.html">Sobre Nosotros</a>
+        <a href="contacto.html" class="activo">Contacto</a>
+    </div>
+
+    <div class="nav-separador"></div>
+
+    <div class="nav-bloque nav-acciones">
+        <a href="mis-pedidos.html" id="linkPedidos"><i class="fa-solid fa-box"></i> Mis Pedidos</a>
+        <a href="carrito.html" id="linkCarrito"><i class="fa-solid fa-cart-shopping"></i> Carrito <span id="contadorCarrito" class="badge">0</span></a>
+        
+        <div class="nav-usuario" id="navUsuario" style="display:none;">
+            <button class="nav-usuario-btn" id="btnUsuario">
+                <span id="linkNombre">👤 Usuario</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="nav-usuario-menu" id="menuUsuario">
+                <a href="perfil.html" id="linkPerfil"><i class="fa-solid fa-user-gear"></i> Mi Perfil</a>
+                <a href="#" id="linkLogout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+            </div>
+        </div>
+
+        <a href="login.html" id="linkLogin"><i class="fa-solid fa-user"></i> Iniciar Sesión</a>
+        <a href="admin/productos.html" id="linkAdmin" style="display:none;"><i class="fa-solid fa-gear"></i> Admin</a>
+
+        <button id="btnTema" style="background:none; border:none; color: #ffffff; cursor:pointer; font-size:1.1rem;" onclick="cambiarTema()" title="Cambiar tema">
+            <i class="fa-solid fa-palette"></i>
+        </button>
+    </div>
+</nav>
+            <button class="menu-hamburguesa" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido -->
+    <main class="contacto-contenedor">
+        <h1 class="titulo-seccion" data-aos="fade-down">Contacto</h1>
+
+        <div class="contacto-grid">
+            <!-- Formulario -->
+            <div class="auth-tarjeta" data-aos="fade-up">
+                <h3 class="resumen-titulo"><i class="fa-solid fa-paper-plane"></i> Envíanos un mensaje</h3>
+                <form id="formContacto" class="auth-form">
+                    <div class="input-grupo">
+                        <label><i class="fa-solid fa-user"></i> Nombre</label>
+                        <input type="text" id="contactoNombre" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="input-grupo">
+                        <label><i class="fa-solid fa-envelope"></i> Email</label>
+                        <input type="email" id="contactoEmail" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="input-grupo">
+                        <label><i class="fa-brands fa-whatsapp"></i> Teléfono</label>
+                        <input type="tel" id="contactoTelefono" placeholder="+51 999 888 777" required>
+                    </div>
+                    <div class="input-grupo">
+                        <label><i class="fa-solid fa-comment"></i> Mensaje</label>
+                        <textarea id="contactoMensaje" rows="4" placeholder="¿En qué podemos ayudarte?" style="background: rgba(0,0,0,0.3); border: 1px solid var(--borde); border-radius: 12px; padding: 14px; color: var(--texto-claro); font-family: var(--fuente-texto); resize: vertical;"></textarea>
+                    </div>
+                    <button type="submit" class="boton-auth">
+                        <span>Enviar Mensaje</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Info de contacto -->
+            <div data-aos="fade-up" data-aos-delay="200">
+                <div class="contacto-info-tarjeta" style="margin-bottom: 20px;">
+                    <i class="fa-solid fa-envelope" style="font-size: 2rem; color: var(--primario); margin-bottom: 15px;"></i>
+                    <h4>Email</h4>
+                    <p>soporte@veltrix.com</p>
+                </div>
+                <div class="contacto-info-tarjeta" style="margin-bottom: 20px;">
+                    <i class="fa-solid fa-phone" style="font-size: 2rem; color: var(--primario); margin-bottom: 15px;"></i>
+                    <h4>Teléfono</h4>
+                    <p>+51 929667206</p>
+                </div>
+                <div class="contacto-info-tarjeta">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 2rem; color: #25D366; margin-bottom: 15px;"></i>
+                    <h4>WhatsApp</h4>
+                    <a href="https://wa.me/51929667206" target="_blank">Chatear ahora</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-contenedor">
+            <div class="footer-col">
+                <h3><i class="fa-solid fa-bolt"></i> VELTRIX</h3>
+                <p>Tu tienda de tecnología de confianza</p>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <a href="index.html">Inicio</a>
+                <a href="sobre-nosotros.html">Sobre Nosotros</a>
+                <a href="contacto.html">Contacto</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fa-solid fa-envelope"></i> soporte@veltrix.com</p>
+                <p><i class="fa-solid fa-phone"></i> +51 929667206</p>
+            </div>
+        </div>
+        <div class="footer-copy">
+            <p>&copy; 2026 Veltrix. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/particulas.js"></script>
+    <script src="js/cursor-hielo.js"></script>
+    <script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+    AOS.init({ duration: 800, once: true });
+
+    function mostrarExito(mensaje) {
+        const anterior = document.querySelector('.exito-mensaje');
+        if (anterior) anterior.remove();
+
+        const div = document.createElement('div');
+        div.className = 'exito-mensaje';
+        div.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + mensaje;
+        document.querySelector('.contacto-contenedor').prepend(div);
+        
+        setTimeout(() => {
+            div.style.opacity = '0';
+            setTimeout(() => div.remove(), 500);
+        }, 6000);
+    }
+
+    document.getElementById('formContacto').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const nombre = document.getElementById('contactoNombre').value.trim();
+        const email = document.getElementById('contactoEmail').value.trim();
+        const telefono = document.getElementById('contactoTelefono').value.trim();
+        const mensaje = document.getElementById('contactoMensaje').value.trim();
+
+        if (!nombre || !email || !telefono || !mensaje) {
+            alert('Completa todos los campos.');
+            return;
+        }
+
+        try {
+            const res = await fetch('http://localhost:8080/api/contactos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, email, telefono, mensaje })
+            });
+
+            if (res.ok) {
+                mostrarExito(' Mensaje enviado correctamente. Te responderemos pronto a tu WhatsApp.');
+                this.reset();
+            } else {
+                alert('Error al enviar el mensaje.');
+            }
+        } catch (error) {
+            alert('Error de conexión.');
+        }
+    });
+</script>
+    <!-- Botón flotante de WhatsApp -->
+<a href="https://wa.me/51929667206" target="_blank" class="whatsapp-flotante" title="¿Necesitas ayuda? Chatea con nosotros">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+</body>
+</html>

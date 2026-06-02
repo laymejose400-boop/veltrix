@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta | Veltrix</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+    <!-- Fondo de partículas -->
+    <canvas id="particulas"></canvas>
+    <canvas id="canvasHielo" style="position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none;"></canvas>
+    <div class="cursor-hielo-punto" id="cursorHielo"></div>
+
+    <!-- Barra de navegación simplificada -->
+<header class="navbar">
+    <div class="navbar-contenedor">
+        <a href="index.html" class="logo">
+            <img src="imagenes/LOGO.png" alt="Veltrix" class="logo-img">
+        </a>
+        <nav class="nav-links" style="display: flex; align-items: center; gap: 15px; justify-content: flex-end; width: 100%; padding-right: 24px;">
+            <a href="index.html">Inicio</a>
+            <a href="login.html">Iniciar Sesión</a>
+            <button id="btnTema" style="background:none; border:none; color: #ffffff; cursor:pointer; font-size:1.1rem;" onclick="cambiarTema()" title="Cambiar tema">
+                <i class="fa-solid fa-palette"></i>
+            </button>
+        </nav>
+    </div>
+</header>
+    <!-- Contenido principal: tarjeta de registro -->
+    <main class="auth-contenedor">
+        <div class="auth-tarjeta auth-tarjeta-registro" data-aos="zoom-in" data-aos-duration="600">
+            <!-- Efecto de brillo deslizante -->
+            <div class="auth-brillo"></div>
+
+            <div class="auth-icono">
+                <div class="auth-icono-circulo">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+            </div>
+
+            <h2 class="auth-titulo">Crear Cuenta</h2>
+            <p class="auth-subtitulo">Únete a la comunidad Veltrix</p>
+
+            <form id="formRegistro" class="auth-form">
+                <!-- Nombre -->
+                <div class="input-grupo">
+                    <label for="nombre"><i class="fa-solid fa-user"></i> Nombre completo</label>
+                    <input type="text" id="nombre" placeholder="Tu nombre" required autocomplete="name">
+                </div>
+
+                <!-- Email -->
+                <div class="input-grupo">
+                    <label for="email"><i class="fa-solid fa-envelope"></i> Correo electrónico</label>
+                    <input type="email" id="email" placeholder="tu@email.com" required autocomplete="email">
+                </div>
+
+                <!-- Contraseña -->
+                <div class="input-grupo">
+                    <label for="password"><i class="fa-solid fa-lock"></i> Contraseña</label>
+                    <div class="input-password">
+                        <input type="password" id="password" placeholder="••••••••" required autocomplete="new-password">
+                        <button type="button" class="toggle-password" id="togglePasswordRegistro">
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Confirmar contraseña -->
+                <div class="input-grupo">
+                    <label for="confirmar"><i class="fa-solid fa-lock"></i> Confirmar contraseña</label>
+                    <div class="input-password">
+                        <input type="password" id="confirmar" placeholder="••••••••" required autocomplete="new-password">
+                        <button type="button" class="toggle-password" id="toggleConfirmarRegistro">
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mensaje de error -->
+                <div class="auth-error" id="errorRegistro" style="display: none;"></div>
+
+                <button type="submit" class="boton-auth" id="btnRegistro">
+                    <span>Crear Cuenta</span>
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </form>
+
+            <p class="auth-redireccion">
+                ¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a>
+            </p>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/particulas.js"></script>
+    <script src="js/cursor-hielo.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/registro.js"></script>
+
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra | Veltrix</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+    <canvas id="particulas"></canvas>
+        <canvas id="canvasHielo" style="position: fixed; top: 0; left: 0; z-index: 9998; pointer-events: none;"></canvas>
+    <div class="cursor-hielo-punto" id="cursorHielo"></div>
+
+    <!-- Barra de navegación -->
+    <header class="navbar">
+        <div class="navbar-contenedor">
+            <a href="index.html" class="logo">
+    <img src="imagenes/LOGO.png" alt="Veltrix" class="logo-img">
+</a>
+            <nav class="nav-links" id="navLinks">
+    <div class="nav-bloque nav-exploracion">
+        <a href="index.html">Inicio</a>
+        <a href="sobre-nosotros.html">Sobre Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+    </div>
+
+    <div class="nav-separador"></div>
+
+    <div class="nav-bloque nav-acciones">
+        <a href="mis-pedidos.html" id="linkPedidos"><i class="fa-solid fa-box"></i> Mis Pedidos</a>
+        <a href="carrito.html" id="linkCarrito"><i class="fa-solid fa-cart-shopping"></i> Carrito <span id="contadorCarrito" class="badge">0</span></a>
+        
+        <div class="nav-usuario" id="navUsuario" style="display:none;">
+            <button class="nav-usuario-btn" id="btnUsuario">
+                <span id="linkNombre">👤 Usuario</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="nav-usuario-menu" id="menuUsuario">
+                <a href="perfil.html" id="linkPerfil"><i class="fa-solid fa-user-gear"></i> Mi Perfil</a>
+                <a href="#" id="linkLogout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+            </div>
+        </div>
+
+        <a href="login.html" id="linkLogin"><i class="fa-solid fa-user"></i> Iniciar Sesión</a>
+        <a href="admin/productos.html" id="linkAdmin" style="display:none;"><i class="fa-solid fa-gear"></i> Admin</a>
+
+        <button id="btnTema" style="background:none; border:none; color: #ffffff; cursor:pointer; font-size:1.1rem;" onclick="cambiarTema()" title="Cambiar tema">
+            <i class="fa-solid fa-palette"></i>
+        </button>
+    </div>
+</nav>
+            <button class="menu-hamburguesa" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido del checkout -->
+    <main class="checkout-contenedor">
+        <h1 class="titulo-seccion" data-aos="fade-down">Finalizar Compra</h1>
+
+        <div class="checkout-grid" id="checkoutGrid" data-aos="fade-up">
+            <!-- Resumen del pedido -->
+            <div class="checkout-resumen" id="checkoutResumen">
+                <!-- Se llena con JS -->
+            </div>
+
+            <!-- Formulario de confirmación -->
+            <div class="checkout-form">
+                <div class="auth-tarjeta">
+                    <h3 class="resumen-titulo"><i class="fa-solid fa-truck"></i> Método de Pago</h3>
+                    <div class="metodo-pago">
+                        <label class="pago-opcion">
+                            <input type="radio" name="pago" value="TARJETA" checked>
+                            <span class="pago-label">
+                                <i class="fa-solid fa-credit-card"></i> Tarjeta de Crédito
+                            </span>
+                        </label>
+                        <label class="pago-opcion">
+                            <input type="radio" name="pago" value="TRANSFERENCIA">
+                            <span class="pago-label">
+                                <i class="fa-solid fa-building-columns"></i> Transferencia Bancaria
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="auth-error" id="errorCheckout" style="display: none;"></div>
+
+                    <button class="boton-auth" id="btnConfirmar" onclick="confirmarPedido()">
+                        <span>Confirmar Pedido</span>
+                        <i class="fa-solid fa-lock"></i>
+                    </button>
+                    <p class="auth-redireccion" style="margin-top:16px;">
+                        <a href="carrito.html"><i class="fa-solid fa-arrow-left"></i> Volver al carrito</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-contenedor">
+            <div class="footer-col">
+                <h3><i class="fa-solid fa-bolt"></i> VELTRIX</h3>
+                <p>Tu tienda de tecnología de confianza</p>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces</h4>
+                <a href="index.html">Inicio</a>
+                <a href="carrito.html">Carrito</a>
+                <a href="mis-pedidos.html">Mis Pedidos</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fa-solid fa-envelope"></i> soporte@veltrix.com</p>
+                <p><i class="fa-solid fa-phone"></i> +51 999 888 777</p>
+            </div>
+        </div>
+        <div class="footer-copy">
+            <p>&copy; 2026 Veltrix. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/particulas.js"></script>
+    <script src="js/cursor-hielo.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/checkout.js"></script>
+
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+</html>
