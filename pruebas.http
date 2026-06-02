@@ -1,0 +1,187 @@
+### Listar categorías
+GET http://localhost:8080/api/categorias
+
+### Ver categoría 1
+GET http://localhost:8080/api/categorias/1
+
+### Listar productos
+GET http://localhost:8080/api/productos
+
+### Ver producto 1
+GET http://localhost:8080/api/productos/1
+
+### Filtrar por categoría
+GET http://localhost:8080/api/productos/buscar?categoria=1
+
+### Registrar cliente
+POST http://localhost:8080/api/auth/registro
+Content-Type: application/json
+
+{
+  "nombre": "Cliente Prueba",
+  "email": "cliente@email.com",
+  "password": "123456"
+}
+
+### Login admin
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@veltrix.com",
+  "password": "admin123"
+}
+
+### Login cliente
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "cliente@email.com",
+  "password": "123456"
+}
+
+### ADMIN: Crear producto
+POST http://localhost:8080/api/productos
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB2ZWx0cml4LmNvbSIsInJvbCI6IkFETUlOIiwiaWF0IjoxNzc5NjQ5NDk5LCJleHAiOjE3Nzk3MzU4OTl9.3ZvmutJHc4lwt0BhgXFVsWlmtcShcpZYKgtctdyE2lI
+
+
+{
+  "nombre": "Monitor 4K",
+  "descripcion": "Monitor 27 pulgadas",
+  "precio": 499.99,
+  "stock": 10,
+  "categoriaId": 3
+}
+
+### ADMIN: Crear categoría
+POST http://localhost:8080/api/categorias
+Content-Type: application/json
+Authorization: Bearer PEGA_TOKEN_ADMIN_AQUI
+
+{
+  "nombre": "Componentes",
+  "descripcion": "Tarjetas de video y procesadores"
+}
+
+### CLIENTE intenta crear producto
+POST http://localhost:8080/api/productos
+Content-Type: application/json
+Authorization: Bearer PEGA_TOKEN_CLIENTE_AQUI
+
+{
+  "nombre": "No autorizado",
+  "precio": 10,
+  "stock": 1,
+  "categoriaId": 1
+}
+
+### Ver carrito
+GET http://localhost:8080/api/carrito
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NTY3MzEsImV4cCI6MTc3OTc0MzEzMX0.nGI0Pvfp8eg_inzt5fDrFBJzomGGr38hO-Am0hkGkIw
+
+### Agregar producto al carrito
+POST http://localhost:8080/api/carrito
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NTY3MzEsImV4cCI6MTc3OTc0MzEzMX0.nGI0Pvfp8eg_inzt5fDrFBJzomGGr38hO-Am0hkGkIw
+
+{
+  "productoId": 1,
+  "cantidad": 2
+}
+
+### Ver carrito con producto
+GET http://localhost:8080/api/carrito
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NTY3MzEsImV4cCI6MTc3OTc0MzEzMX0.nGI0Pvfp8eg_inzt5fDrFBJzomGGr38hO-Am0hkGkIw
+
+### Crear pedido desde carrito
+POST http://localhost:8080/api/pedidos
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NTgwNjUsImV4cCI6MTc3OTc0NDQ2NX0.EViFswPgeLCa5jeOo4Ndr90ZEGuZ_q2tZ3P3WEro1uY
+
+### Ver carrito (debe estar vacío)
+GET http://localhost:8080/api/carrito
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NTgwNjUsImV4cCI6MTc3OTc0NDQ2NX0.EViFswPgeLCa5jeOo4Ndr90ZEGuZ_q2tZ3P3WEro1uY
+
+### Ver historial de pedidos
+GET http://localhost:8080/api/pedidos
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NTg3MzMsImV4cCI6MTc3OTc0NTEzM30.nVhz8QkOci_yGrzsW4Nf58aJziA2dN3hKrQ9Qz-SWiA
+
+### Ver producto (stock reducido)
+GET http://localhost:8080/api/productos/1
+
+
+
+
+### Agregar al carrito
+POST http://localhost:8080/api/carrito
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NTg5MjcsImV4cCI6MTc3OTc0NTMyN30.icdXS753XVzLnY515_rZapX_KpMy7v7SY7Cha07SZo8
+
+{
+  "productoId": 2,
+  "cantidad": 1
+}
+
+### Crear pedido
+POST http://localhost:8080/api/pedidos
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NTg5MjcsImV4cCI6MTc3OTc0NTMyN30.icdXS753XVzLnY515_rZapX_KpMy7v7SY7Cha07SZo8
+
+
+### Login admin
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@veltrix.com",
+  "password": "admin123"
+}
+
+### Admin: Ver todos los pedidos
+GET http://localhost:8080/api/admin/pedidos
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB2ZWx0cml4LmNvbSIsInJvbCI6IkFETUlOIiwiaWF0IjoxNzc5NjYwMDE5LCJleHAiOjE3Nzk3NDY0MTl9.Cu5_s1IReZTKtl7g5PrN48tfASCJamu_m9jZaWJRUaA
+
+### Login cliente
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "cliente@email.com",
+  "password": "123456"
+}
+
+### Agregar producto al carrito
+POST http://localhost:8080/api/carrito
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NjAzMDMsImV4cCI6MTc3OTc0NjcwM30.kHBz1gVIOgSFcbySXbk5-BDsfYTco5VmZXXk7o1mBeg
+
+{
+  "productoId": 1,
+  "cantidad": 1
+}
+
+### Crear pedido
+POST http://localhost:8080/api/pedidos
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnRlQGVtYWlsLmNvbSIsInJvbCI6IkNMSUVOVEUiLCJpYXQiOjE3Nzk2NjAzMDMsImV4cCI6MTc3OTc0NjcwM30.kHBz1gVIOgSFcbySXbk5-BDsfYTco5VmZXXk7o1mBeg
+
+### Login admin
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@veltrix.com",
+  "password": "admin123"
+}
+
+### Admin: Ver todos los pedidos
+GET http://localhost:8080/api/admin/pedidos
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB2ZWx0cml4LmNvbSIsInJvbCI6IkFETUlOIiwiaWF0IjoxNzc5NjYwNDkzLCJleHAiOjE3Nzk3NDY4OTN9.8qDSXGAX8Y7TrGdMCT0nzqFk10qO3s-2ux3cnYcaP38
+
+### Admin: Cambiar estado a ENVIADO
+PUT http://localhost:8080/api/admin/pedidos/3/estado
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB2ZWx0cml4LmNvbSIsInJvbCI6IkFETUlOIiwiaWF0IjoxNzc5NjYwNDkzLCJleHAiOjE3Nzk3NDY4OTN9.8qDSXGAX8Y7TrGdMCT0nzqFk10qO3s-2ux3cnYcaP38
+
+{
+  "estado": "ENVIADO"
+}
