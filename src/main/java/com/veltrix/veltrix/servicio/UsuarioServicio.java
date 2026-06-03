@@ -61,4 +61,10 @@ public class UsuarioServicio {
         String token = jwtUtil.generarToken(usuario.getEmail(), usuario.getRol().getNombre());
         return new AuthRespuesta(token, usuario.getEmail(), usuario.getRol().getNombre(), usuario.getNombre());
     }
+    public void cambiarPassword(String email, String nuevaPassword) {
+        Usuario usuario = usuarioRepositorio.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setPasswordHash(encoder.encode(nuevaPassword));
+        usuarioRepositorio.save(usuario);
+    }
 }

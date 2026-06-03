@@ -6,6 +6,7 @@ import com.veltrix.veltrix.dto.RegistroRequest;
 import com.veltrix.veltrix.servicio.UsuarioServicio;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,5 +28,10 @@ public class AuthControlador {
     @PostMapping("/login")
     public ResponseEntity<AuthRespuesta> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(usuarioServicio.login(request));
+    }
+    @PostMapping("/cambiar-password")
+    public ResponseEntity<?> cambiarPassword(@RequestBody Map<String, String> body) {
+        usuarioServicio.cambiarPassword(body.get("email"), body.get("password"));
+        return ResponseEntity.ok(Map.of("mensaje", "Contraseña actualizada"));
     }
 }
