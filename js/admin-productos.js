@@ -79,7 +79,7 @@ if (archivoInput && archivoInput.files.length > 0) {
     formData.append('archivo', archivoInput.files[0]);
     
     try {
-        const res = await fetch('http://localhost:8080/api/imagenes/subir', {
+        const res = await fetch('https://veltrix-api-dzez.onrender.com/api/imagenes/subir', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
             body: formData

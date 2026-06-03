@@ -176,7 +176,7 @@
         }
 
         try {
-            const res = await fetch('http://localhost:8080/api/contactos', {
+            const res = await fetch('https://veltrix-api-dzez.onrender.com/api/contactos', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nombre, email, telefono, mensaje })
