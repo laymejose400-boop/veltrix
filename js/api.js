@@ -2,7 +2,7 @@
 // VELTRIX - Conexión con el backend
 // ============================================
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = 'https://veltrix-api-dzez.onrender.com/api';
 
 /**
  * Realiza una petición a la API.
